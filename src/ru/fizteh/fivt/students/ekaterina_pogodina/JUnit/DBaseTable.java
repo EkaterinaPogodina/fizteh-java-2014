@@ -17,6 +17,9 @@ public class DBaseTable implements Table {
     public DBaseTable(BaseTable baseTable) {
         table = baseTable;
     }
+    public DBaseTable(Path pathTable, String name) {
+        table = new BaseTable(name, pathTable);
+    }
 
     @Override
     public String get(String key) throws IllegalArgumentException {
