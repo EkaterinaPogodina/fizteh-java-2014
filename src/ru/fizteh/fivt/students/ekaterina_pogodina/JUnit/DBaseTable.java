@@ -2,7 +2,8 @@ package ru.fizteh.fivt.students.ekaterina_pogodina.JUnit;
 
 import java.nio.file.Path;
 import java.util.Map.Entry;
-import ru.fizteh.fivt.students.ekaterina_pogodina.basicclasses.Table;
+
+import ru.fizteh.fivt.storage.strings.*;
 import ru.fizteh.fivt.students.ekaterina_pogodina.filemap.DataBase;
 import ru.fizteh.fivt.students.ekaterina_pogodina.multiFileMap.BaseTable;
 

@@ -1,7 +1,7 @@
 package ru.fizteh.fivt.students.ekaterina_pogodina.JUnit;
 
-import ru.fizteh.fivt.students.ekaterina_pogodina.basicclasses.Table;
-import ru.fizteh.fivt.students.ekaterina_pogodina.basicclasses.TableProvider;
+import ru.fizteh.fivt.storage.strings.TableProvider;
+import ru.fizteh.fivt.storage.strings.Table;
 import ru.fizteh.fivt.students.ekaterina_pogodina.multiFileMap.TableManager;
 
 

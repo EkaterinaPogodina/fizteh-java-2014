@@ -2,6 +2,7 @@ package ru.fizteh.fivt.students.ekaterina_pogodina.multiFileMap;
 
 import ru.fizteh.fivt.students.ekaterina_pogodina.JUnit.DBaseTable;
 import ru.fizteh.fivt.students.ekaterina_pogodina.basicclasses.*;
+import ru.fizteh.fivt.storage.strings.Table;
 import ru.fizteh.fivt.students.ekaterina_pogodina.filemap.DataBase;
 import ru.fizteh.fivt.students.ekaterina_pogodina.shell.Rm;
 

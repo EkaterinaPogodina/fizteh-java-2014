@@ -1,11 +1,9 @@
 package ru.fizteh.fivt.students.ekaterina_pogodina.JUnit;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ru.fizteh.fivt.students.ekaterina_pogodina.basicclasses.Table;
+import ru.fizteh.fivt.storage.strings.*;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +32,6 @@ public class DBaseTableTest {
         }
     }
 
-    //Tests on wrong table format.
     @Test
     public final void testDBTableCreatedFromDirectoryWithNonDirectories() throws Exception {
         Files.createDirectory(tableDirectoryPath);
@@ -193,9 +190,6 @@ public class DBaseTableTest {
         assertNull(test.remove(testKey1));
     }
 
-    /*CommitTests.
-    Also checks implicitly inside put, get and remove tests.
-    */
     @Test
     public final void testCommitCreatesRealFileOnTheDisk() throws Exception {
         Files.createDirectory(tableDirectoryPath);
@@ -407,9 +401,4 @@ public class DBaseTableTest {
 
         assertEquals(1, test.size());
     }
-
-    /*@After
-    public final void tearDown() throws IOException {
-        Utility.recursiveDelete(testDirectory);
-    }*/
 }

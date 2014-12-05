@@ -1,7 +1,6 @@
 package ru.fizteh.fivt.students.ekaterina_pogodina.JUnit;
 
-import ru.fizteh.fivt.students.ekaterina_pogodina.basicclasses.TableProvider;
-import ru.fizteh.fivt.students.ekaterina_pogodina.basicclasses.TableProviderFactory;
+import ru.fizteh.fivt.storage.strings.*;
 
 public class DataBaseTableProviderFactory implements TableProviderFactory {
 

@@ -11,9 +11,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by Екатерина on 23.11.2014.
- */
 public class DBaseTableProviderTest {
     private final Path testDirectory = Paths.get(System.getProperty("fizteh.db.dir"));
     private final Path tableDirPath = testDirectory.resolve("Test");
