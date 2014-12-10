@@ -10,9 +10,9 @@ import ru.fizteh.fivt.students.ekaterina_pogodina.multiFileMap.BaseTable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBaseTable implements Table {
+public class DBaseTable<Obj> implements Table {
     static final int SIZE = 16;
-    private BaseTable table;
+    private BaseTable<String> table;
     public int savedKeys = 0;
 
     public DBaseTable(BaseTable baseTable) {
@@ -27,7 +27,6 @@ public class DBaseTable implements Table {
         if (key == null) {
             throw new IllegalArgumentException("null  key");
         }
-
         if (table.keys.containsKey(key)) {
             return (table.keys.get(key));
         }

@@ -10,14 +10,14 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class BaseTable {
+public class BaseTable<Obj> {
     static final int SIZEDIR = 16;
     static final int SIZEDAT = 16;
     public String tableName;
     public Path path;
     public DataBase[][] tableDateBase;
-    public Map<String, String> keys;
-    public Map<String, String> puted;
+    public Map<String, Obj> keys;
+    public Map<String, Obj> puted;
     public Set<String> removed;
     public BaseTable(String name, Path pathTable) {
         keys = new HashMap<>();

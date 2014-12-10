@@ -15,8 +15,8 @@ import java.nio.file.Paths;
 public class TableManager {
     public String currentTable;
     public Path path;
-    public BaseTable usingTable;
-    public Map<String, BaseTable> tables;
+    public BaseTable<String> usingTable;
+    public Map<String, BaseTable<String>> tables;
     public Map<String, Table> basicTables;
     public boolean saved = false;
 
@@ -140,9 +140,9 @@ public class TableManager {
     }
 
     public void showTables(String[] args) throws Exception {
-        BaseTable entryTable;
+        BaseTable<String> entryTable;
         int rowCount;
-        for (Map.Entry<String, BaseTable> entry: tables.entrySet()) {
+        for (Map.Entry<String, BaseTable<String>> entry: tables.entrySet()) {
             rowCount = 0;
             entryTable = entry.getValue();
             for (int i = 0; i < usingTable.SIZEDIR; i++) {
