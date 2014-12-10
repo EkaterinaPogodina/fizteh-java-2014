@@ -2,7 +2,6 @@ package ru.fizteh.fivt.students.Volodin_Denis.MultiFileMap;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
@@ -53,9 +52,9 @@ public class DataBase implements Map<String, String>, AutoCloseable {
             }
             return listKeys;
         } catch (Exception e) {
-            filemapSmthWrong("list", e.getMessage());
+            ErrorFunctions.smthWrong("list", e.getMessage());
         }
-        return new String[0]; //warning
+        return new String[0]; // Unreachable code, add return to ignore Eclipse warning.
     }
 
     public String getPath() throws Exception {
@@ -68,7 +67,7 @@ public class DataBase implements Map<String, String>, AutoCloseable {
         for (int i = 0; i < FOLDERS; ++i) {
             for (int j = 0; j < FILES; ++j) {
                 Path helpPath =  Paths.get(databasePath, Integer.toString(i) + ".dir", Integer.toString(j)
-                        + ".dat").normalize();
+                                                                             + ".dat").normalize();
                 if (helpPath.toFile().exists()) {
                     try (DataInputStream input = new DataInputStream(new FileInputStream(helpPath.toString()))) {
                         while (true) {
@@ -76,13 +75,13 @@ public class DataBase implements Map<String, String>, AutoCloseable {
                                 byte[] word = new byte[input.readInt()];
                                 input.readFully(word);
                                 key = new String(word, "UTF-8");
-
+                                
                                 word = new byte[input.readInt()];
                                 input.readFully(word);
                                 value = new String(word, "UTF-8");
-
+                                
                                 if ((Math.abs(key.hashCode()) % FOLDERS != i)
-                                        || (Math.abs(key.hashCode()) / FOLDERS % FILES != j)) {
+                                 || (Math.abs(key.hashCode()) / FOLDERS % FILES != j)) {
                                     throw new Exception("wrong input");
                                 }
                                 database.put(key, value);
@@ -91,11 +90,11 @@ public class DataBase implements Map<String, String>, AutoCloseable {
                             }
                         }
                     } catch (Exception e) {
-                        filemapErrorRead("read");
+                        ErrorFunctions.errorRead("read");
                     }
                 }
             }
-        }
+        }   
     }
 
     public void writeOnDisk() throws Exception {
@@ -113,17 +112,17 @@ public class DataBase implements Map<String, String>, AutoCloseable {
         for (int i = 0; i < FOLDERS; ++i) {
             for (int j = 0; j < FILES; ++j) {
                 Path helpPath =  Paths.get(databasePath, Integer.toString(i) + ".dir", Integer.toString(j)
-                        + ".dat").normalize();
+                                                                             + ".dat").normalize();
                 if (helpPath.toFile().exists()) {
                     if (!helpPath.toFile().delete()) {
-                        filemapSmthWrong("write", "file is not deleted");
+                        ErrorFunctions.smthWrong("write", "file is not deleted");
                     }
                 }
             }
             Path helpPath =  Paths.get(databasePath, Integer.toString(i) + ".dir").normalize();
             if (helpPath.toFile().exists()) {
                 if (!helpPath.toFile().delete()) {
-                    filemapSmthWrong("write", "folder is not deleted");
+                    ErrorFunctions.smthWrong("write", "folder is not deleted");
                 }
             }
         }
@@ -137,55 +136,30 @@ public class DataBase implements Map<String, String>, AutoCloseable {
                     }
                     helpPath =  Paths.get(helpPath.toString(), j + ".dat").normalize();
                     Files.createFile(helpPath);
-
+                    
                     try (FileOutputStream output = new FileOutputStream(helpPath.toString())) {
                         for (String key : keyList) {
-                            ByteBuffer buffer1 = ByteBuffer.allocate(4);
-                            byte[] keyByte = buffer1.putInt(key.getBytes("UTF-8").length).array();
-                            output.write(keyByte);
-                            output.write(key.getBytes("UTF-8"));
-
-                            ByteBuffer buffer2 = ByteBuffer.allocate(4);
-                            byte[] valueByte = buffer2.putInt(database.get(key).getBytes("UTF-8").length).array();
-                            output.write(valueByte);
-                            output.write(database.get(key).getBytes("UTF-8"));
+                            writeOneWordOnDisk(key, output);
+                            writeOneWordOnDisk(database.get(key), output);
                         }
                     } catch (Exception e) {
-                        filemapErrorWrite("write");
+                        ErrorFunctions.errorWrite("write");
                     }
                 }
             }
         }
     }
 
-    public void deleteEmptyFiles() throws Exception {
-        File helpPath;
-        try {
-            for (int i = 0; i < FOLDERS; ++i) {
-                for (int j = 0; j < FILES; ++j) {
-                    helpPath =  Paths.get(databasePath, Integer.toString(i) + ".dir", Integer.toString(j)
-                            + ".dat").normalize().toFile();
-                    if (helpPath.exists()) {
-                        if (helpPath.length() == 0) {
-                            helpPath.delete();
-                        }
-                    }
-                }
-                helpPath =  Paths.get(databasePath, Integer.toString(i) + ".dir").normalize().toFile();
-                if (helpPath.exists()) {
-                    if (helpPath.list().length == 0) {
-                        helpPath.delete();
-                    }
-                }
-            }
-        } catch (Exception exception) {
-            filemapSmthWrong("delete empty files", exception.getMessage());
-        }
+    private void writeOneWordOnDisk(final String word, FileOutputStream output) throws Exception {
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        byte[] wordByte = buffer.putInt(word.getBytes("UTF-8").length).array();
+        output.write(wordByte);
+        output.write(word.getBytes("UTF-8"));
     }
-
+    
     @Override
     public void close() throws Exception {
-        writeOnDisk();
+        writeOnDisk();        
     }
 
     @Override
@@ -246,17 +220,5 @@ public class DataBase implements Map<String, String>, AutoCloseable {
     @Override
     public Collection<String> values() {
         return database.values();
-    }
-
-    private void filemapErrorRead(final String commandName) throws Exception {
-        throw new Exception(commandName + " : error reading from file");
-    }
-
-    private void filemapErrorWrite(final String commandName) throws Exception {
-        throw new Exception(commandName + " : error writing to file");
-    }
-
-    private void filemapSmthWrong(final String commandName, final String message) throws Exception {
-        throw new Exception(commandName + " :" + message);
     }
 }
