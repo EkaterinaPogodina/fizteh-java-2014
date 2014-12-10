@@ -34,7 +34,7 @@
     </target>
 
     <target name="run.checkstyle" description="Checkstyle utility (code conventions)">
-        <taskdef resource="checkstyletask.properties" classpath="lib/checkstyle-5.6-all.jar"/>
+        <taskdef resource="checkstyletask.properties" classpath="src/ru/fizteh/fivt/students/ekaterina_pogodina/shell/checkstyle-5.6-all.jar"/>
 
         <checkstyle
                 config="lib/checkstyle-rules.xml"
