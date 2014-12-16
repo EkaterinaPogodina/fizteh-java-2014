@@ -26,11 +26,15 @@ public class DBaseTableProvider implements TableProvider {
     }
 
     @Override
-    public Table createTable(String name) throws Exception {
+    public Table createTable(String name) {
         if (tableManager.basicTables.containsKey(name)) {
             return null;
         }
-        tableManager.create(name);
+        try {
+            tableManager.create(name);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
         try {
             return tableManager.basicTables.get(name);
         } catch (IllegalArgumentException e) {
@@ -39,12 +43,16 @@ public class DBaseTableProvider implements TableProvider {
     }
 
     @Override
-    public void removeTable(String name) throws Exception {
+    public void removeTable(String name) {
         if (!tableManager.basicTables.containsKey(name)) {
             throw new IllegalArgumentException("there is no such table");
         }
         try {
-            boolean f = tableManager.drop(name);
+            try {
+                boolean f = tableManager.drop(name);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Illegal table's name", e);
         }

@@ -7,6 +7,7 @@ import ru.fizteh.fivt.storage.strings.*;
 import ru.fizteh.fivt.students.ekaterina_pogodina.filemap.DataBase;
 import ru.fizteh.fivt.students.ekaterina_pogodina.multiFileMap.BaseTable;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +35,12 @@ public class DBaseTable<Obj> implements Table {
     }
 
     @Override
-    public int size() throws Exception {
+    public int size() {
         return table.keys.size();
     }
 
     @Override
-    public String put(String key, String value) throws Exception, IllegalArgumentException {
+    public String put(String key, String value) throws IllegalArgumentException {
         if (key == null) {
             throw new IllegalArgumentException("null key");
         }
@@ -62,7 +63,7 @@ public class DBaseTable<Obj> implements Table {
     }
 
     @Override
-    public int commit() throws Exception {
+    public int commit() {
         if (table.puted.size() == 0 && table.removed.size() == 0) {
             return 0;
         }
@@ -107,9 +108,18 @@ public class DBaseTable<Obj> implements Table {
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
-                table.tableDateBase[nDirectory][nFile] = new DataBase(pathFile.toString());
+                try {
+                    table.tableDateBase[nDirectory][nFile] = new DataBase(pathFile.toString());
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+
             }
-            table.tableDateBase[nDirectory][nFile].put(pair.getKey(), pair.getValue());
+            try {
+                table.tableDateBase[nDirectory][nFile].put(pair.getKey(), pair.getValue());
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
             if (table.keys.containsKey(pair.getKey())) {
                 table.keys.remove(pair.getKey());
             }
@@ -121,14 +131,22 @@ public class DBaseTable<Obj> implements Table {
             b = key.getBytes()[0];
             nDirectory = b % SIZE;
             nFile = b / SIZE % SIZE;
-            table.tableDateBase[nDirectory][nFile].remove(key);
+            try {
+                table.tableDateBase[nDirectory][nFile].remove(key);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
             table.keys.remove(key);
         }
         table.removed.clear();
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (table.tableDateBase[i][j] != null) {
-                    table.tableDateBase[i][j].close();
+                    try {
+                        table.tableDateBase[i][j].close();
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
+                    }
                 }
             }
         }
@@ -137,7 +155,7 @@ public class DBaseTable<Obj> implements Table {
     }
 
     @Override
-    public int rollback() throws Exception {
+    public int rollback() {
         int size = table.puted.size();
         table.removed.clear();
         table.puted.clear();

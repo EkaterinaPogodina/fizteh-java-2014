@@ -2,8 +2,11 @@ package ru.fizteh.fivt.students.ekaterina_pogodina.JUnit;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 import ru.fizteh.fivt.storage.strings.*;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,9 +16,9 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class DBaseTableTest {
-    private final Path testDirectory = Paths.get(System.getProperty("fizteh.db.dir"));
+    private Path testDirectory ;
     private final String tableName = "Table1";
-    private final Path tableDirectoryPath = testDirectory.resolve(tableName);
+    private Path tableDirectoryPath = testDirectory.resolve(tableName);
     private final String testKey1 = "key1";
     private final String testKey2 = "key2";
     private final String testValue1 = "value1";
@@ -25,15 +28,21 @@ public class DBaseTableTest {
     private static final int SIZEDIR = 16;
     private static final int SIZEDAT = 16;
 
+    @Rule
+    public TemporaryFolder tmpFolder = new TemporaryFolder();
+
     @Before
-    public final void setUp() throws Exception {
+    public final void setUp() throws IOException {
+        String name = tmpFolder.newFolder().getAbsolutePath().toString();
+        testDirectory = Paths.get(System.getProperty(name));
+        tableDirectoryPath = testDirectory.resolve(tableName);
         if (!testDirectory.toFile().exists()) {
             Files.createDirectory(testDirectory);
         }
     }
 
     @Test
-    public final void testDBTableCreatedFromDirectoryWithNonDirectories() throws Exception {
+    public final void testDBTableCreatedFromDirectoryWithNonDirectories() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Path newFilePath = tableDirectoryPath.resolve(testFile);
         newFilePath.toFile().createNewFile();
@@ -41,7 +50,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testDBTableCreatedFromDirWithWrongSubdirectories() throws Exception {
+    public final void testDBTableCreatedFromDirWithWrongSubdirectories() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Path newSubdirectory = tableDirectoryPath.resolve("subdirectory");
         Files.createDirectory(newSubdirectory);
@@ -49,7 +58,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testDBTableCreatedFromDirWithEmptySubdirs() throws Exception {
+    public final void testDBTableCreatedFromDirWithEmptySubdirs() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Path newSubdirectory = tableDirectoryPath.resolve(validSubdirectory);
         Files.createDirectory(newSubdirectory);
@@ -57,7 +66,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testDBTableCreatedFromDirWithSubdirsWithWrongFiles() throws Exception {
+    public final void testDBTableCreatedFromDirWithSubdirsWithWrongFiles() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Path newSubdirectory = tableDirectoryPath.resolve(validSubdirectory);
         Files.createDirectory(newSubdirectory);
@@ -68,7 +77,7 @@ public class DBaseTableTest {
 
     //GetTests.
     @Test
-    public final void testGetReturnsNullIfKeyIsNotFound() throws Exception {
+    public final void testGetReturnsNullIfKeyIsNotFound() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -76,14 +85,14 @@ public class DBaseTableTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public final void testGetThrowsIllegalArgumentExceptionCalledForNullKey() throws Exception {
+    public final void testGetThrowsIllegalArgumentExceptionCalledForNullKey() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
         test.get(null);
     }
 
     @Test
-    public final void testGetCalledForNonComittedKey() throws Exception {
+    public final void testGetCalledForNonComittedKey() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -93,7 +102,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testGetCalledForComittedKey() throws Exception {
+    public final void testGetCalledForComittedKey() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -105,7 +114,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testGetCalledForDeletedKeyBeforeCommit() throws Exception {
+    public final void testGetCalledForDeletedKeyBeforeCommit() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -118,21 +127,21 @@ public class DBaseTableTest {
 
     //PutTests.
     @Test(expected = IllegalArgumentException.class)
-    public final void testPutThrowsIllegalArgumentExceptionCalledForNullKey() throws Exception {
+    public final void testPutThrowsIllegalArgumentExceptionCalledForNullKey() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
         test.put(null, testValue1);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public final void testPutThrowsExceptionCalledForNullValue() throws Exception {
+    public final void testPutThrowsExceptionCalledForNullValue() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
         test.put(testKey1, null);
     }
 
     @Test
-    public final void testPutReturnsNullIfKeyHasNotBeenWrittenYet() throws Exception {
+    public final void testPutReturnsNullIfKeyHasNotBeenWrittenYet() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -140,7 +149,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testPutReturnsOldValueIfKeyExists() throws Exception {
+    public final void testPutReturnsOldValueIfKeyExists() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
         test.put(testKey1, testValue1);
@@ -150,7 +159,7 @@ public class DBaseTableTest {
 
     //RemoveTests.
     @Test(expected = IllegalArgumentException.class)
-    public final void testRemoveThrowsExceptionCalledForNullKey() throws Exception {
+    public final void testRemoveThrowsExceptionCalledForNullKey() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
         test.remove(null);
@@ -165,7 +174,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testRemoveCalledForDeletedKeyBeforeCommit() throws Exception {
+    public final void testRemoveCalledForDeletedKeyBeforeCommit() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -177,7 +186,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testRemoveCalledForDeletedKeyAfterCommit() throws Exception {
+    public final void testRemoveCalledForDeletedKeyAfterCommit() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -191,7 +200,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testCommitCreatesRealFileOnTheDisk() throws Exception {
+    public final void testCommitCreatesRealFileOnTheDisk() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -206,7 +215,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testCommitOverwritesCommitedKey() throws Exception {
+    public final void testCommitOverwritesCommitedKey() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -222,7 +231,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testCommitRemovesExistentKeyAfterCommit() throws Exception {
+    public final void testCommitRemovesExistentKeyAfterCommit() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -238,7 +247,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testCommitEmptiedAfterLoadingTable() throws Exception {
+    public final void testCommitEmptiedAfterLoadingTable() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -257,7 +266,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testCommitReturnsNonZeroChangesPuttingNewRecord() throws Exception {
+    public final void testCommitReturnsNonZeroChangesPuttingNewRecord() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -267,7 +276,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testCommitReturnsNotZeroChangesRewriting() throws Exception {
+    public final void testCommitReturnsNotZeroChangesRewriting() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -279,7 +288,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testCommitNoChanges() throws Exception {
+    public final void testCommitNoChanges() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -292,7 +301,7 @@ public class DBaseTableTest {
 
     //RollbackTests.
     @Test
-    public final void testRollbackAfterPuttingNewKey() throws Exception {
+    public final void testRollbackAfterPuttingNewKey() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -310,7 +319,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testRollbackNoChanges() throws Exception {
+    public final void testRollbackNoChanges() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -325,7 +334,7 @@ public class DBaseTableTest {
 
     //List tests.
     @Test
-    public final void testListCalledForEmptyTable() throws Exception {
+    public final void testListCalledForEmptyTable() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -333,7 +342,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testListCalledForNonEmptyNewTable() throws Exception {
+    public final void testListCalledForNonEmptyNewTable() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -351,7 +360,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testListCalledForNonEmptyCommitedTable() throws Exception {
+    public final void testListCalledForNonEmptyCommitedTable() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -373,7 +382,7 @@ public class DBaseTableTest {
 
     //Size tests.
     @Test
-    public final void testSizeCalledForNonEmptyNonCommitedTable() throws Exception {
+    public final void testSizeCalledForNonEmptyNonCommitedTable() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 
@@ -387,7 +396,7 @@ public class DBaseTableTest {
     }
 
     @Test
-    public final void testSizeCalledForNonEmptyCommitedTable() throws Exception {
+    public final void testSizeCalledForNonEmptyCommitedTable() throws IOException {
         Files.createDirectory(tableDirectoryPath);
         Table test = new DBaseTable(testDirectory, tableName);
 

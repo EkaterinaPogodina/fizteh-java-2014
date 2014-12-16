@@ -5,7 +5,13 @@ import ru.fizteh.fivt.storage.strings.*;
 public class DataBaseTableProviderFactory implements TableProviderFactory {
 
     @Override
-    public TableProvider create(String dir) throws Exception {
-        return new DBaseTableProvider(dir);
+    public TableProvider create(String dir) {
+        TableProvider table = null;
+        try {
+            table =  new DBaseTableProvider(dir);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+        return table;
     }
 }
