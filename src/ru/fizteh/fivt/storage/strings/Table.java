@@ -1,6 +1,7 @@
 package ru.fizteh.fivt.storage.strings;
 
 import java.util.List;
+<<<<<<< HEAD
 /**
  * @author Fedor Lavrentyev
  * @author Dmitriy Komanov
@@ -71,3 +72,24 @@ public interface Table {
     List<String> list();
 }
 
+=======
+
+public interface Table {
+
+    String getName();
+
+    String get(String key);
+
+    String put(String key, String value) throws Exception;
+
+    String remove(String key);
+
+    int size() throws Exception;
+
+    int commit() throws Exception;
+
+    int rollback() throws Exception;
+
+    List<String> list();
+}
+>>>>>>> origin/master

@@ -1,4 +1,5 @@
 package ru.fizteh.fivt.storage.strings;
+<<<<<<< HEAD
 /**
  * Представляет интерфейс для создание экземпляров {@link TableProvider}. Предполагается, что реализация интерфейса
  * фабрики будет иметь публичный конструктор без параметров.
@@ -16,4 +17,9 @@ public interface TableProviderFactory {
      * @throws IllegalArgumentException Если значение директории null или имеет недопустимое значение.
      */
     TableProvider create(String dir);
+=======
+
+public interface TableProviderFactory {
+    TableProvider create(String dir) throws Exception;
+>>>>>>> origin/master
 }

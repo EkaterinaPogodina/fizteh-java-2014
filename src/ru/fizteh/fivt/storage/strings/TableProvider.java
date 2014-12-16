@@ -1,4 +1,5 @@
 package ru.fizteh.fivt.storage.strings;
+<<<<<<< HEAD
 /**
  * @author Fedor Lavrentyev
  * @author Dmitriy Komanov
@@ -31,4 +32,14 @@ public interface TableProvider {
      * @throws IllegalStateException Если таблицы с указанным названием не существует.
      */
     void removeTable(String name);
+=======
+
+public interface TableProvider {
+
+    Table getTable(String name);
+
+    Table createTable(String name) throws Exception;
+
+    void removeTable(String name) throws Exception;
+>>>>>>> origin/master
 }
