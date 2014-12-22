@@ -1,57 +1,60 @@
 package ru.fizteh.fivt.students.ekaterina_pogodina.JUnit;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import ru.fizteh.fivt.students.ekaterina_pogodina.JUnit.DBaseTableProvider;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class DBaseTableProviderTest {
-    private final Path testDirectory = Paths.get(System.getProperty("fizteh.db.dir"));
-    private final Path tableDirPath = testDirectory.resolve("Test");
+    private Path testDirectory;
+    private Path tableDirPath;
     private final String testFile = "filename";
     private final String tableDirectoryName = "Test";
     private final String wrongTableName = ".";
     private final String testTableName = "Test Table";
     private final String tableName = "table1";
+    @Rule
+    public TemporaryFolder tmpFolder = new TemporaryFolder();
+
+    public DBaseTableProviderTest() {
+    }
 
     @Before
     public final void setUp() throws Exception {
-        if (!testDirectory.toFile().exists()) {
+        String name = tmpFolder.newFolder().getAbsolutePath().toString();
+        testDirectory = Paths.get(name);
+        tableDirPath = this.testDirectory.resolve("Test");
+        if(!testDirectory.toFile().exists()) {
             Files.createDirectory(testDirectory);
         }
+
     }
 
     @Test
-    public final void testTableProviderCreatedForNonexistentDirectory() throws Exception{
+    public final void testTableProviderCreatedForNonexistentDirectory() throws Exception {
         new DBaseTableProvider(tableDirPath.toString());
-
         assertTrue(tableDirPath.toFile().exists());
     }
 
-
     @Test(expected = IllegalArgumentException.class)
-    public final void testProviderThrowsExceptionCreatedNotForDirectory() throws Exception {
-        Path newFilePath = testDirectory.resolve(testFile);
-        Files.createFile(newFilePath);
-        new DBaseTableProvider(newFilePath.toString());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public final void testTableProviderThrowsExceptionCreatedForInvalidPath() throws Exception{
+    public final void testTableProviderThrowsExceptionCreatedForInvalidPath() throws Exception {
         new DBaseTableProvider("\0");
     }
 
     @Test
     public final void testGetTableReturnsNullIfTableNameDoesNotExist() throws Exception {
         DBaseTableProvider test = new DBaseTableProvider(testDirectory.toString());
-        test.createTable(tableDirectoryName);
-
+        test.createTable("Test");
         assertNull(test.getTable("MyTable"));
     }
 
@@ -70,33 +73,30 @@ public class DBaseTableProviderTest {
     @Test(expected = IllegalArgumentException.class)
     public final void testCreateTableThrowsExceptionCalledForWrongTableName() throws Exception {
         DBaseTableProvider test = new DBaseTableProvider(testDirectory.toString());
-        test.createTable(wrongTableName);
+        test.createTable(".");
     }
 
     @Test
     public final void testCreateTableOnTheDiskCalledForValidTableName() throws Exception {
         DBaseTableProvider test = new DBaseTableProvider(testDirectory.toString());
-        test.createTable(testTableName);
-        Path newTablePath = testDirectory.resolve(testTableName);
-
+        test.createTable("Test Table");
+        Path newTablePath = testDirectory.resolve("Test Table");
         assertTrue(newTablePath.toFile().exists() && newTablePath.toFile().isDirectory());
     }
 
     @Test
     public final void testCreateTableReturnsNullCalledForExistentOnDiskTable() throws Exception {
-        Files.createDirectory(tableDirPath);
+        Files.createDirectory(this.tableDirPath, new FileAttribute[0]);
         DBaseTableProvider test = new DBaseTableProvider(testDirectory.toString());
-
-        assertNull(test.createTable(tableDirectoryName));
+        assertNull(test.createTable("Test"));
     }
 
     @Test
     public final void testRemoveTableFromTheDiskCalledForValidTableName() throws Exception {
         DBaseTableProvider test = new DBaseTableProvider(testDirectory.toString());
-        test.createTable(testTableName);
-        Path newTablePath = testDirectory.resolve(testTableName);
-        test.removeTable(testTableName);
-
+        test.createTable("Test Table");
+        Path newTablePath = testDirectory.resolve("Test Table");
+        test.removeTable("Test Table");
         assertFalse(newTablePath.toFile().exists());
     }
 

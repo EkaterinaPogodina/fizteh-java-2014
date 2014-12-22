@@ -4,17 +4,25 @@ import ru.fizteh.fivt.storage.strings.TableProvider;
 import ru.fizteh.fivt.storage.strings.Table;
 import ru.fizteh.fivt.students.ekaterina_pogodina.multiFileMap.TableManager;
 
+import java.io.File;
+
 
 public class DBaseTableProvider implements TableProvider {
 
     public TableManager tableManager;
 
     public DBaseTableProvider(String dir) throws Exception {
+        if (dir == null | dir == "\0") {
+            throw new IllegalArgumentException();
+        }
         tableManager = new TableManager(dir);
     }
 
     @Override
     public Table getTable(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("key's name is null");
+        }
         if (tableManager.basicTables.containsKey(name)) {
             try {
                 return tableManager.basicTables.get(name);
@@ -27,6 +35,9 @@ public class DBaseTableProvider implements TableProvider {
 
     @Override
     public Table createTable(String name) {
+        if (name == null | name == "\0" | name == "." ) {
+            throw new IllegalArgumentException("key's name is null");
+        }
         if (tableManager.basicTables.containsKey(name)) {
             return null;
         }
@@ -44,8 +55,11 @@ public class DBaseTableProvider implements TableProvider {
 
     @Override
     public void removeTable(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("key's name is null");
+        }
         if (!tableManager.basicTables.containsKey(name)) {
-            throw new IllegalArgumentException("there is no such table");
+            throw new IllegalStateException("there is no such table");
         }
         try {
             try {
